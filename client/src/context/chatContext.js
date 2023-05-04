@@ -5,7 +5,9 @@ import useMessageCollection from '../hooks/useMessageCollection';
  * ChatContext is a context object that is used to share collection of messages
  * between components
  */
-const ChatContext = createContext({});
+ const ChatContext = createContext({});
+export const AuthContext = createContext();
+
 
 /**
  * ChatContextProvider is a functional component that serves as a provider for the ChatContext.
@@ -26,3 +28,4 @@ const ChatContextProvider = (props) => {
 }
 
 export { ChatContext, ChatContextProvider }
+

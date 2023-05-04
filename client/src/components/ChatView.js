@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect, useContext } from 'react'
 import ChatMessage from './ChatMessage'
 import { ChatContext } from '../context/chatContext'
-import { auth } from '../firebase'
 import Thinking from './Thinking'
 import { MdSend } from 'react-icons/md'
 
@@ -16,8 +15,7 @@ const ChatView = () => {
   const options = ['ChatGPT', 'DALL·E']
   const [selected, setSelected] = useState(options[0])
   const [messages, addMessage, , , setLimit] = useContext(ChatContext)
-  const user = auth.currentUser.uid
-  const picUrl = auth.currentUser.photoURL || 'https://api.adorable.io/avatars/23/abott@adorable.png'
+
 
   /**
    * Scrolls the chat area to the bottom.
@@ -51,18 +49,16 @@ const ChatView = () => {
    * @param {Event} e - The submit event of the form.
    */
   const sendMessage = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    const newMsg = formValue
-    const aiModel = selected
+    const newMsg = formValue;
+    const aiModel = selected;
 
-    const BASE_URL = process.env.REACT_APP_BASE_URL
-    const PATH = aiModel === options[0] ? 'davinci' : 'dalle'
-    const POST_URL = BASE_URL + PATH
+    const POST_URL = 'https://dev.withgpt.com/api/gpt3_5_turbo/';
 
-    setThinking(true)
-    setFormValue('')
-    updateMessage(newMsg, false, aiModel)
+    setThinking(true);
+    setFormValue('');
+    updateMessage(newMsg, false, aiModel);
 
     const response = await fetch(POST_URL, {
       method: 'POST',
@@ -71,30 +67,32 @@ const ChatView = () => {
       },
       body: JSON.stringify({
         prompt: newMsg,
-        user: user
-      })
-    })
+      }),
+    });
 
-    const data = await response.json()
-    setLimit(data.limit)
+    const data = await response.json();
+    setLimit(data.limit);
 
-    console.log(response.status)
+    console.log(response.status);
     if (response.ok) {
       // The request was successful
-      data.bot && updateMessage(data.bot, true, aiModel)
+      data.bot && updateMessage(data.bot, true, aiModel);
     } else if (response.status === 429) {
-      setThinking(false)
+      setThinking(false);
     } else {
       // The request failed
-      window.alert(`openAI is returning an error: ${response.status + response.statusText} 
-      please try again later`)
-      console.log(`Request failed with status code ${response.status}`)
-      setThinking(false)
+      window.alert(
+        `openAI is returning an error: ${response.status + response.statusText} 
+      please try again later`
+      );
+      console.log(`Request failed with status code ${response.status}`);
+      setThinking(false);
     }
 
-    setThinking(false)
-  }
-  
+    setThinking(false);
+  };
+
+
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
       // 👇 Get input value
@@ -121,7 +119,7 @@ const ChatView = () => {
       <main className='chatview__chatarea'>
 
         {messages.map((message, index) => (
-          <ChatMessage key={index} message={{ ...message, picUrl }} />
+          <ChatMessage key={index} message={{ ...message }} />
         ))}
 
         {thinking && <Thinking />}
@@ -134,12 +132,12 @@ const ChatView = () => {
           <option>{options[1]}</option>
         </select>
         <div className='flex items-stretch w-full justify-between'>
-        <textarea ref={inputRef} className='chatview__textarea-message' value={formValue} 
-        onKeyDown={handleKeyDown}
-        onChange={(e) => setFormValue(e.target.value)} />
-        <button type="submit" className='chatview__btn-send' disabled={!formValue}>
-          <MdSend size={30}/>
-        </button>
+          <textarea ref={inputRef} className='chatview__textarea-message' value={formValue}
+            onKeyDown={handleKeyDown}
+            onChange={(e) => setFormValue(e.target.value)} />
+          <button type="submit" className='chatview__btn-send' disabled={!formValue}>
+            <MdSend size={30} />
+          </button>
         </div>
       </form>
     </div>

@@ -1,23 +1,20 @@
-import Home from './pages/Home'
-import SignIn from './pages/SignIn'
-import { ChatContextProvider } from './context/chatContext'
-import { useAuthState } from 'react-firebase-hooks/auth'
-
-import { auth } from './firebase'
-
+import Home from './pages/Home';
+import SignIn from './pages/SignIn';
+import { ChatContextProvider } from './context/chatContext';
+import { AuthContext } from './context/chatContext';
+import { useProvideAuth } from './hooks/useAuth';
 
 const App = () => {
-  const [user] = useAuthState(auth)
+  const auth = useProvideAuth();
+  const { user } = auth;
+
   return (
-    <ChatContextProvider>
-      <div>
+    <AuthContext.Provider value={auth}>
+      <ChatContextProvider>
+        <div>{user ? <Home /> : <SignIn />}</div>
+      </ChatContextProvider>
+    </AuthContext.Provider>
+  );
+};
 
-        {user ? <Home /> : <SignIn />}
-
-      </div>
-    </ChatContextProvider >
-  )
-}
-
-
-export default App
+export default App;

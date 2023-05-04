@@ -3,7 +3,6 @@ import { MdClose, MdMenu, MdAdd, MdOutlineLogout, MdOutlineQuestionAnswer, MdOut
 import { ChatContext } from '../context/chatContext'
 import bot from '../assets/bot.ico'
 import DarkMode from './DarkMode'
-import { auth } from '../firebase'
 
 /**
  * A sidebar component that displays a list of nav items and a toggle 
@@ -13,7 +12,7 @@ import { auth } from '../firebase'
  */
 const SideBar = () => {
   const [open, setOpen] = useState(true)
-  const [, , clearMessages, limit, setLimit] = useContext(ChatContext)
+  const [, , clearMessages, limit] = useContext(ChatContext)
 
   function handleResize() {
     window.innerWidth <= 720 ? setOpen(false) : setOpen(true)
@@ -29,12 +28,6 @@ const SideBar = () => {
 
   const clearChat = () => clearMessages()
   const SignOut = () => {
-    if (auth.currentUser) {
-      auth.signOut()
-      clearChat()
-      setLimit(-1)
-      window.sessionStorage.clear()
-    }
   }
 
   return (

@@ -1,0 +1,47 @@
+body {
+    background-color: #1f1f1f;
+    color: #ffffff;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  
+  h1 {
+    margin-bottom: 1rem;
+  }
+  
+  input,
+  button,
+  .react-phone-number-input__input {
+    background-color: #2e2e2e;
+    border: 1px solid #444;
+    border-radius: 4px;
+    color: #ffffff;
+    font-size: 1rem;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    width: 100%;
+  }
+  
+  button {
+    cursor: pointer;
+    background-color: #4caf50;
+    border: none;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: #3f9e43;
+  }
+  
+  button:active {
+    background-color: #368a3a;
+  }
+  
+  .container {
+    max-width: 500px;
+    margin: 2rem auto;
+    padding: 2rem;
+    text-align: center;
+    background-color: #262626;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
