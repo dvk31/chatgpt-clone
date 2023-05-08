@@ -6,13 +6,15 @@ import '../SignInPage.css';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import { AuthContext } from '../context/chatContext';
 
-
 function SignInPage() {
   const [step, setStep] = useState(1);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
   const auth = useContext(AuthContext);
 
+  const handleBack = () => {
+    setStep(1);
+  };
 
   const handleLogin = async () => {
     try {
@@ -20,8 +22,6 @@ function SignInPage() {
       const parsedPhoneNumber = parsePhoneNumber(phoneNumber);
       const countryCode = parsedPhoneNumber.countryCallingCode;
       const localNumber = parsedPhoneNumber.nationalNumber;
-
-      console.log(countryCode, localNumber);
 
       const response = await axios.post('https://dev.withgpt.com/users/drf-login/', {
         country_code: `+${countryCode}`,
@@ -52,12 +52,10 @@ function SignInPage() {
 
       if (response.status === 200) {
         localStorage.setItem('token', response.data.token);
-        alert('Verification successful!');
         auth.signIn(response.data.token);
         alert('Verification successful!');
       }
     } catch (error) {
-      console.error('Verification error:', error);
       alert('Verification failed. Please check your input and try again.');
     }
   };
@@ -72,6 +70,7 @@ function SignInPage() {
           verificationCode={verificationCode}
           setVerificationCode={setVerificationCode}
           handleVerification={handleVerification}
+          handleBack={handleBack} 
         />
       )}
     </div>
@@ -81,17 +80,17 @@ function SignInPage() {
 function Step1({ phoneNumber, setPhoneNumber, handleLogin }) {
   return (
     <div className="container">
-      <h1>Step 1: Enter your phone number</h1>
+      <h1>Enter your phone number</h1>
       <PhoneInput defaultCountry="US" withCountryCallingCode placeholder="Enter phone number" value={phoneNumber} onChange={setPhoneNumber} />
       <button onClick={handleLogin}>Send Verification Code</button>
     </div>
   );
 }
 
-function Step2({ verificationCode, setVerificationCode, handleVerification }) {
+function Step2({ verificationCode, setVerificationCode, handleVerification, handleBack }) {
   return (
     <div className="container">
-      <h1>Step 2: Enter verification code</h1>
+      <h1>Enter verification code</h1>
       <input
         type="text"
         placeholder="Verification code"
@@ -99,6 +98,7 @@ function Step2({ verificationCode, setVerificationCode, handleVerification }) {
         onChange={(e) => setVerificationCode(e.target.value)}
       />
       <button onClick={handleVerification}>Verify Code</button>
+      <button className="back-button" onClick={handleBack}>Back</button>
     </div>
   );
 }
