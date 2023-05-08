@@ -12,7 +12,7 @@ import { useAuth } from '../hooks/useAuth';
  * 
  * @param {Object} props - The properties for the component.
  */
-const SideBar = () => {
+const SideBar = ({conversations, setConversations}) => {
   const [open, setOpen] = useState(true)
   const [, , clearMessages, limit] = useContext(ChatContext);
   const auth = useAuth();
@@ -30,7 +30,26 @@ const SideBar = () => {
     }
   }, [])
 
-  const clearChat = () => clearMessages()
+  const clearChat = async () => {
+    if (conversations.length > 0) {
+      const DATABASE_URL = 'https://your-api-endpoint.com/api/messages';
+  
+      try {
+        await fetch(DATABASE_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(conversations),
+        });
+      } catch (error) {
+        console.error('Error sending message to database:', error);
+      }
+    }
+    clearMessages();
+    setConversations([]);
+  }
+
   const SignOut = () => {
      auth.signOut();
   }

@@ -7,15 +7,14 @@ import { MdSend } from 'react-icons/md'
 /**
  * A chat view component that displays a list of messages and a form for sending new messages.
  */
-const ChatView = () => {
+const ChatView = ({conversations, setConversations}) => {
   const messagesEndRef = useRef()
   const inputRef = useRef()
   const [formValue, setFormValue] = useState('')
   const [thinking, setThinking] = useState(false)
   const options = ['ChatGPT', 'DALL·E']
   const [selected, setSelected] = useState(options[0])
-  const [messages, addMessage, , , setLimit] = useContext(ChatContext)
-
+  const [messages, addMessage, , , setLimit] = useContext(ChatContext);
 
   /**
    * Scrolls the chat area to the bottom.
@@ -40,7 +39,8 @@ const ChatView = () => {
       selected: `${selected}`
     }
 
-    addMessage(newMsg)
+    addMessage(newMsg);
+    
   }
 
   /**
@@ -77,6 +77,16 @@ const ChatView = () => {
     if (response.ok) {
       // The request was successful
       data.bot && updateMessage(data.bot, true, aiModel);
+      setConversations((prevConversations) => [
+        ...prevConversations,
+        {
+          message: newMsg,
+          reply: data.bot,
+        },
+      ]);
+      debugger;
+
+      console.log(conversations);
     } else if (response.status === 429) {
       setThinking(false);
     } else {
@@ -90,6 +100,24 @@ const ChatView = () => {
     }
 
     setThinking(false);
+  };
+
+
+  //sendMessageToDatabase
+  const sendToDatabase = async (message) => {
+    const DATABASE_URL = 'https://your-api-endpoint.com/api/messages';
+  
+    try {
+      await fetch(DATABASE_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(message),
+      });
+    } catch (error) {
+      console.error('Error sending message to database:', error);
+    }
   };
 
 
